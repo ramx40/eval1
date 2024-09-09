@@ -1,0 +1,89 @@
+
+movies = {
+    'The Matrix': {'available': True, 'rented_by': None},
+    'Inception': {'available': True, 'rented_by': None},
+    'The Godfather': {'available': True, 'rented_by': None},
+    'Pulp Fiction': {'available': True, 'rented_by': None}
+}
+
+customers = {
+    1: {'name': 'R', 'rented_movies': []},
+    2: {'name': 'B', 'rented_movies': []},
+    3: {'name': 'C', 'rented_movies': []}
+}
+
+rental_transactions = []
+
+def rent_movie(movie_title, customer_id):
+    if movie_title not in movies:
+        print(f"Movie '{movie_title}' does not exist.")
+        return
+    
+    if customer_id not in customers:
+        print(f"Customer ID {customer_id} does not exist.")
+        return
+    
+    if movies[movie_title]['available']:
+        movies[movie_title]['available'] = False
+        movies[movie_title]['rented_by'] = customer_id
+        customers[customer_id]['rented_movies'].append(movie_title)
+        rental_transactions.append({'movie': movie_title, 'customer_id': customer_id, 'action': 'rented'})
+        print(f"Movie '{movie_title}' has been rented to customer {customer_id}.")
+    else:
+        print(f"Movie '{movie_title}' is currently unavailable.")
+
+def return_movie(movie_title, customer_id):
+    if movie_title not in movies:
+        print(f"Movie '{movie_title}' does not exist.")
+        return
+    
+    if customer_id not in customers:
+        print(f"Customer ID {customer_id} does not exist.")
+        return
+    
+    if movie_title in customers[customer_id]['rented_movies']:
+        movies[movie_title]['available'] = True
+        movies[movie_title]['rented_by'] = None
+        customers[customer_id]['rented_movies'].remove(movie_title)
+        rental_transactions.append({'movie': movie_title, 'customer_id': customer_id, 'action': 'returned'})
+        print(f"Movie '{movie_title}' has been returned by customer {customer_id}.")
+    else:
+        print(f"Movie '{movie_title}' was not rented by customer {customer_id}.")
+
+def generate_rental_report():
+    print("\nRental Report:")
+    for transaction in rental_transactions:
+        movie_title = transaction['movie']
+        customer_id = transaction['customer_id']
+        action = transaction['action']
+        customer_name = customers[customer_id]['name']
+        print(f"Movie: {movie_title}, Customer: {customer_name}, Action: {action}")
+
+def main():
+    while True:
+        print("\nMovie Rental Service")
+        print("1. Rent a movie")
+        print("2. Return a movie")
+        print("3. Generate rental report")
+        print("4. Exit")
+        
+        choice = input("Enter your choice: ")
+        
+        if choice == '1':
+            movie_title = input("Enter the movie title to rent: ")
+            customer_id = int(input("Enter customer ID: "))
+            rent_movie(movie_title, customer_id)
+        elif choice == '2':
+            movie_title = input("Enter the movie title to return: ")
+            customer_id = int(input("Enter customer ID: "))
+            return_movie(movie_title, customer_id)
+        elif choice == '3':
+            generate_rental_report()
+        elif choice == '4':
+            print("Exiting the Movie Rental Service. Goodbye!")
+            break
+        else:
+            print("Invalid choice. Please try again.")
+
+if __name__ == "__main__":
+    main()
